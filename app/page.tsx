@@ -6,7 +6,7 @@ import {
   useFetchAnimeListForSeasonQuery,
 } from "@/lib/graphql/generated/graphql-types";
 import { convertSeasonToMediaSeason } from "@/utils/Date";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 export default function Page() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -14,12 +14,17 @@ export default function Page() {
   const [currentYear, setCurrentYear] = useState("2025");
   const [isFetching, setIsFetching] = useState(false);
 
-  const [queryVariables, setQueryVariables] = useState({
-    page: 1,
-    perPage: 12,
-    season: MediaSeason.Spring,
-    seasonYear: 2025,
-  });
+  const defaultQueryVariables = useMemo(
+    () => ({
+      page: 1,
+      perPage: 12,
+      season: MediaSeason.Spring,
+      seasonYear: 2025,
+    }),
+    [],
+  );
+
+  const [queryVariables, setQueryVariables] = useState(defaultQueryVariables);
   const { loading, error, data, fetchMore } = useFetchAnimeListForSeasonQuery({
     variables: queryVariables,
   });
@@ -71,11 +76,10 @@ export default function Page() {
           }}
         />
         <button
-          className="rounded-2xl border-2 p-5 hover:bg-gray-100 active:bg-gray-200"
+          className="rounded-2xl border-2 border-gray-200 p-5 hover:bg-gray-100 active:bg-gray-200"
           onClick={() => {
             setQueryVariables({
-              page: 1,
-              perPage: 10,
+              ...defaultQueryVariables,
               season: convertSeasonToMediaSeason(currentSeason),
               seasonYear: Number(currentYear),
             });
@@ -98,7 +102,7 @@ export default function Page() {
       </div>
       {hasNextPage && (
         <button
-          className="mr-auto ml-auto w-fit rounded-lg border-2 text-2xl hover:cursor-pointer hover:bg-gray-100 active:bg-gray-200"
+          className="mr-auto ml-auto w-fit rounded-lg border-2 p-1 text-2xl hover:cursor-pointer hover:bg-gray-100 active:bg-gray-200"
           onClick={fetchMoreData}
           disabled={loading}
         >
