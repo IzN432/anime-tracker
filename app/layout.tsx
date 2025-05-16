@@ -1,13 +1,16 @@
+import ApolloProviderWrapper from "@/components/ApolloProviderWrapper";
 import "./global.css";
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <html lang="en">
-      <body>{ children }</body>
+      <ApolloProviderWrapper>
+        <body>{children}</body>
+      </ApolloProviderWrapper>
     </html>
-  )
+  );
 }
